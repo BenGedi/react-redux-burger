@@ -1,9 +1,9 @@
 import React , {Component} from 'react';
 import PropTypes from 'prop-types';
-import classes from './burgerIngredient.css';
+import classes from './BurgerIngredient.css';
 
 class BurgerIngredient extends Component {
-  reuder () {
+  render () {
     let ingredient = null; 
 
     switch (this.props.type) {
@@ -33,8 +33,8 @@ class BurgerIngredient extends Component {
       default: 
         ingredient = null;
 
-      return ingredient;
-    }
+      }
+    return ingredient;
   }
 }
 
