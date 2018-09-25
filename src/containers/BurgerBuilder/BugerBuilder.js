@@ -16,16 +16,12 @@ const INGREDIENT_PRICES = {
 
 class BurgerBuilder extends Component {
   state = {
-    ingredients: {
-      salad: 0,
-      bacon: 0,
-      cheese: 0,
-      meat: 0
-    },
+    ingredients: null,
     totalPrice: 4,
     purchasing: false,
     purchasable: false,
-    loading: false
+    loading: false,
+    error: false
   };
 
   updatePurchaseState (ingredients) {
@@ -98,11 +94,21 @@ class BurgerBuilder extends Component {
     // from using firebase we need to add suffix ".json" to the endpoint
     axios.post('/orders.json', order)
       .then(res => {
-        this.setState({loading: false, purchasing: false});
-       })
+        this.setState({ loading: false, purchasing: false });
+      })
       .catch(error => {
-        this.setState({loading: false, purchasing: false});
-       });
+        this.setState({ loading: false, purchasing: false });
+      });
+  }
+
+  componentDidMount() {
+    axios.get('https://react-redux-burger-1.firebaseio.com/ingredients.json')
+      .then(res => {
+        this.setState({ ingredients: res.data });
+      })
+      .catch(error => {
+        this.setState({ error: true });
+      })
   }
 
   render () {
@@ -117,7 +123,7 @@ class BurgerBuilder extends Component {
     return (
       <React.Fragment>
         <Modal show={this.state.purchasing} modalClosed={this.purchaseCancelHandler}>
-          {!this.state.loading
+          {!this.state.loading && this.state.ingredients
             ? <OrderSummary
                 price={this.state.totalPrice}
                 ingredients={this.state.ingredients}
@@ -126,14 +132,19 @@ class BurgerBuilder extends Component {
             : <Spinner />
           }
         </Modal>
-        <Burger ingredients={this.state.ingredients}/>
-        <BuildControls
-          ingredientsAdded={this.addIngredientHandler}
-          ingredientsRemoved={this.removeIngredientHandler}
-          disabled={disabledInfo}
-          purchasable={this.state.purchasable}
-          ordered={this.purchaseHandler}
-          price={this.state.totalPrice} />
+        { this.state.ingredients
+            ? <React.Fragment>
+                <Burger ingredients={this.state.ingredients}/>
+                <BuildControls
+                  ingredientsAdded={this.addIngredientHandler}
+                  ingredientsRemoved={this.removeIngredientHandler}
+                  disabled={disabledInfo}
+                  purchasable={this.state.purchasable}
+                  ordered={this.purchaseHandler}
+                  price={this.state.totalPrice} />
+            </React.Fragment>
+            : !this.state.error ? <Spinner /> : <p>Ingredients can't be loaded</p>
+        }
       </React.Fragment>
     );
   }
