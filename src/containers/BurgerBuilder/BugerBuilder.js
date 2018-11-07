@@ -76,29 +76,45 @@ class BurgerBuilder extends Component {
 
   purchaseContinueHandler = () => {
     // alert('You continue!');
-    this.setState({ loading: true });
-    const order = {
-      ingredients: this.state.ingredients,
-      price: this.state.totalPrice,
-      customer: {
-        name: 'Ben Gedi',
-        address: {
-          street: 'Moshe Sharet 65',
-          zipCode: '45202',
-          country: 'Israel'
-        },
-        email: 'bengedi@gmail.com'
-      },
-      deliveryMethod: 'fastest'
+    // this.setState({ loading: true });
+    // const order = {
+    //   ingredients: this.state.ingredients,
+    //   price: this.state.totalPrice,
+    //   customer: {
+    //     name: 'Ben Gedi',
+    //     address: {
+    //       street: 'Moshe Sharet 65',
+    //       zipCode: '45202',
+    //       country: 'Israel'
+    //     },
+    //     email: 'bengedi@gmail.com'
+    //   },
+    //   deliveryMethod: 'fastest'
+    // }
+    // // from using firebase we need to add suffix ".json" to the endpoint
+    // axios.post('/orders.json', order)
+    //   .then(res => {
+    //     this.setState({ loading: false, purchasing: false });
+    //   })
+    //   .catch(error => {
+    //     this.setState({ loading: false, purchasing: false });
+    //   });
+    
+
+    this.props.history.push({
+      pathname: '/checkout',
+      search: '?' + this.createQueryString()
+    });
+  }
+
+  createQueryString = () => {
+    const queryParams = [];
+
+    for ( const ingredient in this.state.ingredients) {
+      queryParams.push(encodeURIComponent(ingredient) + '=' + encodeURIComponent(this.state.ingredients[ingredient]));
     }
-    // from using firebase we need to add suffix ".json" to the endpoint
-    axios.post('/orders.json', order)
-      .then(res => {
-        this.setState({ loading: false, purchasing: false });
-      })
-      .catch(error => {
-        this.setState({ loading: false, purchasing: false });
-      });
+
+    return queryParams.join('&');
   }
 
   componentDidMount() {
