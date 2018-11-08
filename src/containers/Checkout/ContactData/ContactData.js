@@ -10,7 +10,7 @@ class ContactData extends Component {
         orderForm: {
             name: {
                 elementType: 'input',
-                elemenetConfig: {
+                elementConfig: {
                     type: 'text',
                     placeholder: 'Your Name'
                 },
@@ -18,7 +18,7 @@ class ContactData extends Component {
             },
             street: {
                 elementType: 'input',
-                elemenetConfig: {
+                elementConfig: {
                     type: 'text',
                     placeholder: 'Your Street'
                 },
@@ -26,7 +26,7 @@ class ContactData extends Component {
             },
             zipCode: {
                 elementType: 'input',
-                elemenetConfig: {
+                elementConfig: {
                     type: 'text',
                     placeholder: 'ZIP CODE'
                 },
@@ -34,7 +34,7 @@ class ContactData extends Component {
             },
             country: {
                 elementType: 'input',
-                elemenetConfig: {
+                elementConfig: {
                     type: 'text',
                     placeholder: 'Country'
                 },
@@ -42,7 +42,7 @@ class ContactData extends Component {
             },
             email: {
                 elementType: 'input',
-                elemenetConfig: {
+                elementConfig: {
                     type: 'email',
                     placeholder: 'Your E-mail'
                 },
@@ -50,19 +50,14 @@ class ContactData extends Component {
             },
             deliveryMethod: {
                 elementType: 'select',
-                elemenetConfig: {
+                elementConfig: {
                     option: [
                         { value: 'fastest', displayValue: 'Fastest'},
                         { value: 'cheapest', displayValue: 'Cheapest'}
                     ]
                 },
                 value: ''
-            },
-            street: 'Moshe Sharet 65',
-            zipCode: '45202',
-            country: 'Israel',
-            email: 'bengedi@gmail.com',
-            deliveryMethod: 'fastest'
+            }
         },
         loading: false
     }
@@ -88,15 +83,28 @@ class ContactData extends Component {
     }
 
     render() {
+        const fromElementsArray = [];
+        for (const key in this.state.orderForm) {
+            fromElementsArray.push({
+                id: key,
+                config: this.state.orderForm[key]
+            });
+        }
+
         return (
             <div className={classes.ContactData}>
                 <h4>Enter your Contact Data</h4>
                 {   !this.state.loading 
                     ? <form action="">
-                        <Input elemenetType="" elemenetConfig="" value=""/>
-                        <Input inputtype="input" type="email" name="email" placeholder="Your Email"/>
-                        <Input inputtype="input" type="text" name="street" placeholder="Street"/>
-                        <Input inputtype="input" type="text" name="postalCode" placeholder="Postal Code"/>
+                        {fromElementsArray.map(formElement => (
+                            <Input 
+                                key={formElement.id}
+                                elementType={formElement.config.elementType} 
+                                elementConfig={formElement.config.elementConfig}
+                                value={formElement.config.value}/>
+                        ))
+
+                        }
                         <Button btnType="Success" clicked={this.orderHandler}>ORDER</Button>
                     </form>
                     : <Spinner/> 
