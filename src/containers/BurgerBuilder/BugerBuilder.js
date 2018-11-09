@@ -13,18 +13,15 @@ import * as actionType from '../../store/actions';
 class BurgerBuilder extends Component {
     state = {
     purchasing: false,
-    purchasable: false,
     loading: false,
     error: false
   };
 
   updatePurchaseState (ingredients) {
     const sum = Object.values(ingredients)
-      .reduce((sum, currentValue) => {
-        return sum + currentValue;
-      }, 0);
+      .reduce((sum, currentValue) => sum + currentValue, 0);
 
-    this.setState({purchasable: sum > 0});
+    return sum > 0;
   }
 
   purchaseHandler = () => {
@@ -92,7 +89,7 @@ class BurgerBuilder extends Component {
                   ingredientsAdded={this.props.onIngredientAdded}
                   ingredientsRemoved={this.props.onIngredientRemoved}
                   disabled={disabledInfo}
-                  purchasable={this.state.purchasable}
+                  purchasable={this.updatePurchaseState(this.props.ings)}
                   ordered={this.purchaseHandler}
                   price={this.props.price} />
             </React.Fragment>
