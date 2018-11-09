@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import Button from '../../../components/UI/Button/Button';
 import classes from './ContactData.css';
 import axios from '../../../axios-orders';
@@ -73,7 +74,7 @@ class ContactData extends Component {
         }
 
         const order = {
-            ingredients: this.props.ingredients,
+            ingredients: this.props.ings,
             price: this.props.price,
             orderData: formData
         };
@@ -92,7 +93,7 @@ class ContactData extends Component {
         const updatedOrderForm = {...this.state.orderForm};
         const updatedFromElement = {...updatedOrderForm[inputIdentifier]};
         updatedFromElement.value = event.target.value;
-        updatedOrderForm[inputIdentifier] = updatedFromElement; 
+        updatedOrderForm[inputIdentifier] = updatedFromElement;
         this.setState({orderForm: updatedOrderForm});
     }
 
@@ -100,7 +101,7 @@ class ContactData extends Component {
         const fromElementsArray = [];
         for (const key in this.state.orderForm) {
             fromElementsArray.push({
-                id: key, 
+                id: key,
                 config: this.state.orderForm[key]
             });
         }
@@ -108,12 +109,12 @@ class ContactData extends Component {
         return (
             <div className={classes.ContactData}>
                 <h4>Enter your Contact Data</h4>
-                {   !this.state.loading 
+                {   !this.state.loading
                     ? <form action="">
                         {fromElementsArray.map(formElement => (
-                            <Input 
+                            <Input
                                 key={formElement.id}
-                                elementType={formElement.config.elementType} 
+                                elementType={formElement.config.elementType}
                                 elementConfig={formElement.config.elementConfig}
                                 value={formElement.config.value}
                                 changed={(event) => this.inputChangedHandler(event, formElement.id)}/>
@@ -122,11 +123,18 @@ class ContactData extends Component {
                         }
                         <Button btnType="Success" clicked={this.orderHandler}>ORDER</Button>
                     </form>
-                    : <Spinner/> 
+                    : <Spinner/>
                 }
             </div>
         )
     }
 }
 
-export default ContactData;
+const mapStateToProps = state => {
+    return {
+        ings: state.ingredients,
+        price: state.totalPrice
+    }
+};
+
+export default connect(mapStateToProps)(ContactData);
